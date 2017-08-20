@@ -21,13 +21,15 @@ class OneSignalController
         $status = $request->get('status');
 
         if ($status) {
-            if (!OneSignalDevice::where('one_signal_id','=',$oneSignalId)->first()) {
-                OneSignalDevice::create([
-                    'user_id' => auth()->user()->id,
-                    'one_signal_id' => $oneSignalId,
-                ]);
+            if (!OneSignalDevice::where('one_signal_id', '=', $oneSignalId)->first()) {
+                OneSignalDevice::create(
+                    [
+                        'user_id' => auth()->user()->id,
+                        'one_signal_id' => $oneSignalId,
+                    ]
+                );
             }
-        } elseif ($token = OneSignalDevice::where('one_signal_id','=',$oneSignalId)->first()) {
+        } elseif ($token = OneSignalDevice::where('one_signal_id', '=', $oneSignalId)->first()) {
             $token->delete();
         }
 

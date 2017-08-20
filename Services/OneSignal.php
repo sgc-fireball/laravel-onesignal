@@ -47,7 +47,7 @@ class OneSignal extends Client implements OneSignalInterface
     {
         $fields['app_id'] = $this->config['app_id'];
 
-        return $this->_request('POST', 'notifications', ['json' => $fields]);
+        return $this->internalRequest('POST', 'notifications', ['json' => $fields]);
     }
 
     /**
@@ -57,7 +57,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function cancelNotification(string $id): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'DELETE',
             sprintf('notifications/%s?%s', $id, http_build_query(['app_id' => $this->config['app_id']]))
         );
@@ -71,7 +71,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function viewDevices(int $limit = 50, int $offset = 0): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'GET',
             sprintf(
                 'players?%s',
@@ -93,7 +93,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function viewDevice(string $id): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'GET',
             sprintf(
                 'players/%s?%s',
@@ -119,7 +119,7 @@ class OneSignal extends Client implements OneSignalInterface
         $fields['identifier'] = $identifier;
         $fields['device_type'] = $deviceType;
 
-        return $this->_request(
+        return $this->internalRequest(
             'POST',
             sprintf(
                 'players?%s',
@@ -143,7 +143,7 @@ class OneSignal extends Client implements OneSignalInterface
     {
         $fields['app_id'] = $this->config['app_id'];
 
-        return $this->_request(
+        return $this->internalRequest(
             'PUT',
             sprintf('players/%s?%s', $id),
             ['json' => $fields]
@@ -156,7 +156,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function csvExport(): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'POST',
             sprintf(
                 'players/csv_export?%s',
@@ -176,7 +176,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function viewNotification(string $id): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'GET',
             sprintf(
                 'notification/%s?%s',
@@ -198,7 +198,7 @@ class OneSignal extends Client implements OneSignalInterface
      */
     public function viewNotifications(int $limit = 50, int $offset = 0): Collection
     {
-        return $this->_request(
+        return $this->internalRequest(
             'GET',
             sprintf(
                 'notifications?%s',
@@ -224,7 +224,7 @@ class OneSignal extends Client implements OneSignalInterface
         $fields['app_id'] = $this->config['app_id'];
         $fields['opened'] = isset($fields['opened']) ? $fields['opened'] : true;
 
-        return $this->_request(
+        return $this->internalRequest(
             'PUT',
             sprintf('notifications/%s', $id),
             ['json' => $fields]
@@ -237,10 +237,12 @@ class OneSignal extends Client implements OneSignalInterface
      * @param array $options
      * @return Collection
      */
-    private function _request(string $method, string $url, array $options = []): Collection
+    private function internalRequest(string $method, string $url, array $options = []): Collection
     {
         $options['headers'] = $options['headers'] ?? [];
-        $options['headers']['Authorization'] = $options['headers']['Authorization'] ?? 'Basic '.$this->config['rest_api'];
+        if (!isset($options['headers']['Authorization'])) {
+            $options['headers']['Authorization'] = 'Basic '.$this->config['rest_api'];
+        }
         $response = $this->request($method, self::API_URL.'/'.$url, $options);
         $body = $response->getBody()->getContents();
 

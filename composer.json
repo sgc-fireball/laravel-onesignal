@@ -1,0 +1,54 @@
+{
+  "name": "sgc-fireball/laravel-onesignal",
+  "description": "Laravel onesignal adapter",
+  "keywords": ["framework", "laravel", "onesignal"],
+  "homepage": "https://github.com/sgc-fireball/laravel-onesignal/",
+  "license": "MIT",
+  "private": false,
+  "type": "project",
+  "authors": [
+    {
+      "name": "Richard Huelsberg",
+      "email": "rh+github@hrdns.de",
+      "role": "lead"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "guzzlehttp/guzzle": "~6.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.7",
+    "pdepend/pdepend": "@stable",
+    "phploc/phploc": "@stable",
+    "phpmd/phpmd": "@stable",
+    "phpunit/php-code-coverage": "@stable",
+    "sebastian/phpcpd": "@stable",
+    "squizlabs/php_codesniffer": "@stable",
+    "theseer/phpdox": "^0.8",
+    "jakub-onderka/php-parallel-lint": "~0.9"
+  },
+  "autoload": {
+    "classmap": ["Database/Migrations"],
+    "psr-4": {
+      "HRDNS\\LaravelPackages\\OneSignal\\": "./"
+    }
+  },
+  "suggest": {
+    "php": ">=7.1",
+    "ext-curl": "*"
+  },
+  "scripts": {
+    "test": ["@test-cleanup","@test-prepare","@phplint","@phploc","@phpunit","@phpdepend","@phpmd","@phpdox","@phpcs","@phpcpd"],
+    "test-cleanup": ["rm -rf build"],
+    "test-prepare": ["mkdir -p build/logs", "mkdir -p build/pdepend", "mkdir -p build/phpdox"],
+    "phplint": ["vendor/bin/parallel-lint --exclude vendor ."],
+    "phploc": ["vendor/bin/phploc --count-tests --log-csv build/logs/phploc.csv --log-xml build/logs/phploc.xml --exclude=vendor ."],
+    "phpunit": ["vendor/bin/phpunit --configuration phpunit.xml --log-junit build/logs/junit.xml"],
+    "phpdepend": ["vendor/bin/pdepend --jdepend-xml=build/logs/jdepend.xml --jdepend-chart=build/pdepend/dependencies.svg --overview-pyramid=build/pdepend/overview-pyramid.svg --ignore=vendor ."],
+    "phpmd": ["vendor/bin/phpmd . xml phpmd.xml --reportfile build/logs/pmd.xml || true"],
+    "phpdox": ["vendor/bin/phpdox"],
+    "phpcs": ["vendor/bin/phpcs --report=checkstyle --report-file=build/logs/checkstyle.xml Config/ Console/ Database/ Http/ Models/ Routes/ Services/ Supports/ Tests/"],
+    "phpcpd": ["vendor/bin/phpcpd --exclude vendor --log-pmd build/logs/pmd-cpd.xml ."]
+  }
+}
